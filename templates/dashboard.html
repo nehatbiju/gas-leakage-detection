@@ -1,0 +1,504 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Gas Leak Detection System{% endblock %}
+{% block page_title %}Real-Time Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <!-- Status Cards -->
+    <div class="col-md-3 mb-3">
+        <div class="card status-card safe-status" id="systemStatusCard">
+            <div class="card-body text-center">
+                <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                <h5 class="card-title">System Status</h5>
+                <h3 id="systemStatus">SAFE</h3>
+                <small id="lastUpdate">Last update: --</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-microchip fa-2x text-primary mb-2"></i>
+                <h5 class="card-title">Active Sensors</h5>
+                <h3 class="text-primary" id="activeSensors">3</h3>
+                <small class="text-muted">of 3 total</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle fa-2x text-warning mb-2"></i>
+                <h5 class="card-title">Active Alerts</h5>
+                <h3 class="text-warning" id="activeAlerts">0</h3>
+                <small class="text-muted">unresolved</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <i class="fas fa-valve fa-2x text-info"></i>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="shutoffToggle" checked>
+                    </div>
+                </div>
+                <h5 class="card-title">Auto Shutoff</h5>
+                <h6 id="shutoffStatus" class="text-success">ENABLED</h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Real-time Gauges -->
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Gas Sensor Readings
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-4 text-center">
+                        <canvas id="mq4Gauge" width="120" height="120"></canvas>
+                        <h6 class="mt-2">MQ-4 (Methane)</h6>
+                        <span id="mq4Value" class="badge bg-primary">-- ppm</span>
+                    </div>
+                    <div class="col-4 text-center">
+                        <canvas id="mq7Gauge" width="120" height="120"></canvas>
+                        <h6 class="mt-2">MQ-7 (CO)</h6>
+                        <span id="mq7Value" class="badge bg-info">-- ppm</span>
+                    </div>
+                    <div class="col-4 text-center">
+                        <canvas id="mq135Gauge" width="120" height="120"></canvas>
+                        <h6 class="mt-2">MQ-135 (Air Quality)</h6>
+                        <span id="mq135Value" class="badge bg-success">-- ppm</span>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12 text-center">
+                        <h6>Temperature</h6>
+                        <h4 id="temperatureValue" class="text-primary">-- °C</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Risk Assessment -->
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-brain me-2"></i>
+                    AI Risk Assessment
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="gauge-container mb-3">
+                    <canvas id="riskGauge" width="200" height="200"></canvas>
+                </div>
+                <h4 id="riskLevel" class="text-success">LOW RISK</h4>
+                <p id="riskProbability" class="text-muted">Leak Probability: 0%</p>
+                <div class="progress mb-2">
+                    <div id="riskProgressBar" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                </div>
+                <small class="text-muted">AI Confidence Level</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Real-time Chart -->
+    <div class="col-md-8 mb-3">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Real-Time Monitoring
+                </h5>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-primary active" data-timerange="1">1H</button>
+                    <button type="button" class="btn btn-outline-primary" data-timerange="6">6H</button>
+                    <button type="button" class="btn btn-outline-primary" data-timerange="24">24H</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="realtimeChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Alerts -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bell me-2"></i>
+                    Recent Alerts
+                </h5>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                <div id="recentAlerts">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <p>No recent alerts</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Device Status -->
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-network-wired me-2"></i>
+                    Device Network Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row" id="deviceStatus">
+                    <!-- Device status will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let realtimeChart;
+    let chartData = {
+        labels: [],
+        datasets: [
+            {
+                label: 'MQ-4 (ppm)',
+                data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                tension: 0.1
+            },
+            {
+                label: 'MQ-7 (ppm)',
+                data: [],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.1
+            },
+            {
+                label: 'MQ-135 (ppm)',
+                data: [],
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.1
+            }
+        ]
+    };
+
+    // Initialize charts
+    function initCharts() {
+        const ctx = document.getElementById('realtimeChart').getContext('2d');
+        realtimeChart = new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'PPM'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            }
+        });
+    }
+
+    // Create gauge chart
+    function createGauge(canvasId, value, max, color) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 40;
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Background circle
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        
+        // Value arc
+        const angle = (value / max) * 2 * Math.PI;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + angle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        
+        // Center text
+        ctx.fillStyle = color;
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(Math.round(value), centerX, centerY + 5);
+    }
+
+    // Update sensor readings
+    function updateSensorReadings(data) {
+        // Update gauge values
+        document.getElementById('mq4Value').textContent = `${Math.round(data.mq4_ppm)} ppm`;
+        document.getElementById('mq7Value').textContent = `${Math.round(data.mq7_ppm)} ppm`;
+        document.getElementById('mq135Value').textContent = `${Math.round(data.mq135_ppm)} ppm`;
+        document.getElementById('temperatureValue').textContent = `${data.temperature.toFixed(1)} °C`;
+        
+        // Update gauges
+        createGauge('mq4Gauge', data.mq4_ppm, 1000, '#3b82f6');
+        createGauge('mq7Gauge', data.mq7_ppm, 400, '#06b6d4');
+        createGauge('mq135Gauge', data.mq135_ppm, 1000, '#10b981');
+        
+        // Update system status
+        const statusCard = document.getElementById('systemStatusCard');
+        const systemStatus = document.getElementById('systemStatus');
+        
+        if (data.prediction === 1) {
+            statusCard.className = 'card status-card danger-status';
+            systemStatus.textContent = 'LEAK DETECTED';
+        } else {
+            statusCard.className = 'card status-card safe-status';
+            systemStatus.textContent = 'SAFE';
+        }
+        
+        // Update risk assessment
+        if (data.risk_level) {
+            const riskLevel = document.getElementById('riskLevel');
+            const riskProbability = document.getElementById('riskProbability');
+            const riskProgressBar = document.getElementById('riskProgressBar');
+            
+            riskLevel.textContent = `${data.risk_level} RISK`;
+            riskLevel.className = `text-${getRiskColor(data.risk_level)}`;
+            
+            const probability = Math.round(data.probability_leak * 100);
+            riskProbability.textContent = `Leak Probability: ${probability}%`;
+            
+            riskProgressBar.style.width = `${probability}%`;
+            riskProgressBar.className = `progress-bar bg-${getRiskColor(data.risk_level)}`;
+            
+            // Create risk gauge
+            createRiskGauge(probability);
+        }
+        
+        // Update chart
+        updateChart(data);
+        
+        // Update last update time
+        document.getElementById('lastUpdate').textContent = `Last update: ${formatTimestamp(data.timestamp)}`;
+    }
+
+    function createRiskGauge(percentage) {
+        const canvas = document.getElementById('riskGauge');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 80;
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Background arc
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI, 2 * Math.PI);
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 15;
+        ctx.stroke();
+        
+        // Value arc
+        const angle = (percentage / 100) * Math.PI;
+        let color = '#10b981'; // Green
+        if (percentage > 30) color = '#f59e0b'; // Yellow
+        if (percentage > 70) color = '#ef4444'; // Red
+        
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI, Math.PI + angle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 15;
+        ctx.stroke();
+        
+        // Center text
+        ctx.fillStyle = color;
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${percentage}%`, centerX, centerY - 10);
+    }
+
+    function updateChart(data) {
+        const now = new Date(data.timestamp);
+        const timeLabel = now.toLocaleTimeString();
+        
+        // Add new data point
+        chartData.labels.push(timeLabel);
+        chartData.datasets[0].data.push(data.mq4_ppm);
+        chartData.datasets[1].data.push(data.mq7_ppm);
+        chartData.datasets[2].data.push(data.mq135_ppm);
+        
+        // Keep only last 20 points
+        if (chartData.labels.length > 20) {
+            chartData.labels.shift();
+            chartData.datasets.forEach(dataset => dataset.data.shift());
+        }
+        
+        realtimeChart.update('none');
+    }
+
+    // Socket event handlers
+    socket.on('sensor_update', function(data) {
+        updateSensorReadings(data);
+    });
+
+    socket.on('alert', function(alert) {
+        showAlert(`${alert.type}: ${alert.message}`, 
+                  alert.severity === 'HIGH' ? 'danger' : 
+                  alert.severity === 'MEDIUM' ? 'warning' : 'info');
+        
+        // Add to recent alerts
+        addRecentAlert(alert);
+        
+        // Update alert count
+        updateAlertCount();
+    });
+
+    function addRecentAlert(alert) {
+        const alertsContainer = document.getElementById('recentAlerts');
+        
+        // Remove "no alerts" message if present
+        if (alertsContainer.innerHTML.includes('No recent alerts')) {
+            alertsContainer.innerHTML = '';
+        }
+        
+        const alertElement = document.createElement('div');
+        alertElement.className = `alert-item p-3 mb-2 alert-${alert.severity === 'HIGH' ? 'danger' : alert.severity === 'MEDIUM' ? 'warning' : 'info'}`;
+        alertElement.innerHTML = `
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="mb-1">${alert.type}</h6>
+                    <p class="mb-1 small">${alert.message}</p>
+                    <small class="text-muted">${formatTimestamp(alert.timestamp)}</small>
+                </div>
+                <span class="badge bg-${alert.severity === 'HIGH' ? 'danger' : alert.severity === 'MEDIUM' ? 'warning' : 'info'}">${alert.severity}</span>
+            </div>
+        `;
+        
+        alertsContainer.insertBefore(alertElement, alertsContainer.firstChild);
+        
+        // Keep only last 5 alerts
+        while (alertsContainer.children.length > 5) {
+            alertsContainer.removeChild(alertsContainer.lastChild);
+        }
+    }
+
+    function updateAlertCount() {
+        fetch('/api/alerts')
+            .then(response => response.json())
+            .then(alerts => {
+                document.getElementById('activeAlerts').textContent = alerts.length;
+            });
+    }
+
+    // Shutoff toggle
+    document.getElementById('shutoffToggle').addEventListener('change', function() {
+        const action = this.checked ? 'on' : 'off';
+        
+        fetch('/api/toggle_shutoff', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({action: action})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('shutoffStatus').textContent = action.toUpperCase();
+                document.getElementById('shutoffStatus').className = action === 'on' ? 'text-success' : 'text-danger';
+                showAlert(`Auto shutoff ${action === 'on' ? 'enabled' : 'disabled'}`, 'success');
+            }
+        });
+    });
+
+    // Time range buttons
+    document.querySelectorAll('[data-timerange]').forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            document.querySelectorAll('[data-timerange]').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Load historical data
+            const hours = this.dataset.timerange;
+            loadHistoricalData(hours);
+        });
+    });
+
+    function loadHistoricalData(hours) {
+        fetch(`/api/historical_data?hours=${hours}`)
+            .then(response => response.json())
+            .then(data => {
+                // Clear existing data
+                chartData.labels = [];
+                chartData.datasets.forEach(dataset => dataset.data = []);
+                
+                // Add historical data
+                data.forEach(point => {
+                    const time = new Date(point.timestamp).toLocaleTimeString();
+                    chartData.labels.push(time);
+                    chartData.datasets[0].data.push(point.mq4_ppm);
+                    chartData.datasets[1].data.push(point.mq7_ppm);
+                    chartData.datasets[2].data.push(point.mq135_ppm);
+                });
+                
+                realtimeChart.update();
+            });
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        initCharts();
+        updateAlertCount();
+        
+        // Load initial data
+        fetch('/api/current_readings')
+            .then(response => response.json())
+            .then(data => updateSensorReadings(data));
+    });
+</script>
+{% endblock %}

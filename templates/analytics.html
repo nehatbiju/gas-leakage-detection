@@ -1,0 +1,735 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Gas Leak Detection System{% endblock %}
+{% block page_title %}AI Insights & Analytics{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <!-- Key Metrics -->
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-brain fa-2x text-primary mb-2"></i>
+                <h5 class="card-title">AI Accuracy</h5>
+                <h3 class="text-primary">98.7%</h3>
+                <small class="text-success">
+                    <i class="fas fa-arrow-up"></i> +0.3% this week
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                <h5 class="card-title">Prevented Incidents</h5>
+                <h3 class="text-success">47</h3>
+                <small class="text-muted">This month</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-clock fa-2x text-info mb-2"></i>
+                <h5 class="card-title">Avg Response Time</h5>
+                <h3 class="text-info">2.3s</h3>
+                <small class="text-success">
+                    <i class="fas fa-arrow-down"></i> -0.5s improved
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                <h5 class="card-title">Risk Score</h5>
+                <h3 class="text-warning">Low</h3>
+                <small class="text-muted">Current assessment</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Predictive Analytics -->
+    <div class="col-md-8 mb-3">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-crystal-ball me-2"></i>
+                    Predictive Risk Analysis
+                </h5>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-primary active" data-period="24h">24H</button>
+                    <button type="button" class="btn btn-outline-primary" data-period="7d">7D</button>
+                    <button type="button" class="btn btn-outline-primary" data-period="30d">30D</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="predictiveChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Risk Factors -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Risk Factors
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="risk-factor mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Temperature Variance</span>
+                        <span class="badge bg-warning">Medium</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" style="width: 65%"></div>
+                    </div>
+                    <small class="text-muted">±3.2°C from normal</small>
+                </div>
+                
+                <div class="risk-factor mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Gas Concentration</span>
+                        <span class="badge bg-success">Low</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: 25%"></div>
+                    </div>
+                    <small class="text-muted">Within normal range</small>
+                </div>
+                
+                <div class="risk-factor mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Sensor Drift</span>
+                        <span class="badge bg-info">Low</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-info" style="width: 15%"></div>
+                    </div>
+                    <small class="text-muted">Calibration stable</small>
+                </div>
+                
+                <div class="risk-factor mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>Environmental</span>
+                        <span class="badge bg-success">Low</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: 20%"></div>
+                    </div>
+                    <small class="text-muted">Optimal conditions</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Model Performance -->
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-cogs me-2"></i>
+                    Model Performance Metrics
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="performanceChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Feature Importance -->
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-weight-hanging me-2"></i>
+                    Feature Importance
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="featureChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Anomaly Detection -->
+    <div class="col-md-8 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-search me-2"></i>
+                    Anomaly Detection Timeline
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="anomalyChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recommendations -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    AI Recommendations
+                </h5>
+            </div>
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                <div class="recommendation-item mb-3 p-3 bg-light rounded">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-tools text-warning me-2 mt-1"></i>
+                        <div>
+                            <h6 class="mb-1">Sensor Calibration</h6>
+                            <p class="mb-1 small">MQ-7 sensor in Kitchen shows slight drift. Recommend calibration within 7 days.</p>
+                            <small class="text-muted">Priority: Medium</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendation-item mb-3 p-3 bg-light rounded">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-sync text-info me-2 mt-1"></i>
+                        <div>
+                            <h6 class="mb-1">Model Update</h6>
+                            <p class="mb-1 small">New training data available. Model retraining recommended for improved accuracy.</p>
+                            <small class="text-muted">Priority: Low</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendation-item mb-3 p-3 bg-light rounded">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-shield-alt text-success me-2 mt-1"></i>
+                        <div>
+                            <h6 class="mb-1">Preventive Maintenance</h6>
+                            <p class="mb-1 small">All systems operating optimally. Next scheduled maintenance in 15 days.</p>
+                            <small class="text-muted">Priority: Low</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendation-item mb-3 p-3 bg-light rounded">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-chart-line text-primary me-2 mt-1"></i>
+                        <div>
+                            <h6 class="mb-1">Threshold Optimization</h6>
+                            <p class="mb-1 small">Analysis suggests adjusting alert thresholds could reduce false positives by 12%.</p>
+                            <small class="text-muted">Priority: Medium</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Data Quality -->
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-database me-2"></i>
+                    Data Quality Assessment
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <canvas id="dataQualityGauge" width="150" height="150"></canvas>
+                            <h6 class="mt-2">Overall Quality</h6>
+                            <span class="badge bg-success">Excellent</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="quality-metrics">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Completeness</span>
+                                <span class="text-success">99.8%</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Accuracy</span>
+                                <span class="text-success">98.5%</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Consistency</span>
+                                <span class="text-warning">95.2%</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Timeliness</span>
+                                <span class="text-success">99.1%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Health -->
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-heartbeat me-2"></i>
+                    System Health Score
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="text-center">
+                            <canvas id="healthGauge" width="150" height="150"></canvas>
+                            <h6 class="mt-2">Health Score</h6>
+                            <span class="badge bg-success">Optimal</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="health-metrics">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>CPU Usage</span>
+                                <span class="text-success">23%</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Memory</span>
+                                <span class="text-success">45%</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Network</span>
+                                <span class="text-success">12%</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Storage</span>
+                                <span class="text-warning">78%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let predictiveChart, performanceChart, featureChart, anomalyChart;
+    
+    // Initialize all charts
+    function initCharts() {
+        initPredictiveChart();
+        initPerformanceChart();
+        initFeatureChart();
+        initAnomalyChart();
+        initGauges();
+    }
+    
+    // Predictive Analytics Chart
+    function initPredictiveChart() {
+        const ctx = document.getElementById('predictiveChart').getContext('2d');
+        predictiveChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: generateTimeLabels(24),
+                datasets: [
+                    {
+                        label: 'Predicted Risk',
+                        data: generatePredictiveData(24),
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Actual Risk',
+                        data: generateActualData(24),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Confidence Interval',
+                        data: generateConfidenceData(24),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderDash: [5, 5],
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Risk Level (%)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        });
+    }
+    
+    // Model Performance Chart
+    function initPerformanceChart() {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        performanceChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'Specificity', 'AUC'],
+                datasets: [{
+                    label: 'Current Model',
+                    data: [98.7, 97.2, 98.9, 98.0, 99.1, 98.5],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    pointBackgroundColor: '#3b82f6'
+                }, {
+                    label: 'Previous Model',
+                    data: [96.5, 95.8, 97.1, 96.4, 98.2, 97.1],
+                    borderColor: '#6b7280',
+                    backgroundColor: 'rgba(107, 114, 128, 0.1)',
+                    pointBackgroundColor: '#6b7280'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Feature Importance Chart
+    function initFeatureChart() {
+        const ctx = document.getElementById('featureChart').getContext('2d');
+        featureChart = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: ['MQ-4 (Methane)', 'MQ-135 (Air Quality)', 'Temperature', 'MQ-7 (CO)', 'Gas Ratio 1', 'Gas Ratio 2'],
+                datasets: [{
+                    label: 'Importance Score',
+                    data: [0.35, 0.28, 0.15, 0.12, 0.06, 0.04],
+                    backgroundColor: [
+                        '#ef4444',
+                        '#f59e0b',
+                        '#10b981',
+                        '#3b82f6',
+                        '#8b5cf6',
+                        '#06b6d4'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 0.4,
+                        title: {
+                            display: true,
+                            text: 'Importance Score'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+    
+    // Anomaly Detection Chart
+    function initAnomalyChart() {
+        const ctx = document.getElementById('anomalyChart').getContext('2d');
+        anomalyChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Normal Data',
+                        data: generateNormalData(100),
+                        backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                        borderColor: '#10b981',
+                        pointRadius: 3
+                    },
+                    {
+                        label: 'Anomalies',
+                        data: generateAnomalyData(10),
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        borderColor: '#ef4444',
+                        pointRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Feature 1'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Feature 2'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Initialize gauges
+    function initGauges() {
+        createGauge('dataQualityGauge', 97, 'Data Quality');
+        createGauge('healthGauge', 94, 'System Health');
+    }
+    
+    // Create gauge chart
+    function createGauge(canvasId, value, title) {
+        const canvas = document.getElementById(canvasId);
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 60;
+        
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Background arc
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI, 2 * Math.PI);
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 12;
+        ctx.stroke();
+        
+        // Value arc
+        const angle = (value / 100) * Math.PI;
+        let color = '#10b981'; // Green
+        if (value < 70) color = '#ef4444'; // Red
+        else if (value < 85) color = '#f59e0b'; // Yellow
+        
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, Math.PI, Math.PI + angle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 12;
+        ctx.stroke();
+        
+        // Center text
+        ctx.fillStyle = color;
+        ctx.font = 'bold 20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${value}%`, centerX, centerY - 5);
+        
+        // Title
+        ctx.fillStyle = '#374151';
+        ctx.font = '12px Arial';
+        ctx.fillText(title, centerX, centerY + 20);
+    }
+    
+    // Data generation functions
+    function generateTimeLabels(hours) {
+        const labels = [];
+        const now = new Date();
+        for (let i = hours - 1; i >= 0; i--) {
+            const time = new Date(now.getTime() - i * 60 * 60 * 1000);
+            labels.push(time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}));
+        }
+        return labels;
+    }
+    
+    function generatePredictiveData(points) {
+        const data = [];
+        for (let i = 0; i < points; i++) {
+            // Simulate predictive risk with some pattern
+            const base = 15 + Math.sin(i * 0.3) * 10;
+            const noise = (Math.random() - 0.5) * 5;
+            data.push(Math.max(0, Math.min(100, base + noise)));
+        }
+        return data;
+    }
+    
+    function generateActualData(points) {
+        const data = [];
+        for (let i = 0; i < points; i++) {
+            // Simulate actual risk, slightly different from predicted
+            const base = 12 + Math.sin(i * 0.3) * 8;
+            const noise = (Math.random() - 0.5) * 4;
+            data.push(Math.max(0, Math.min(100, base + noise)));
+        }
+        return data;
+    }
+    
+    function generateConfidenceData(points) {
+        const data = [];
+        for (let i = 0; i < points; i++) {
+            // Simulate confidence interval
+            const base = 85 + Math.sin(i * 0.2) * 10;
+            const noise = (Math.random() - 0.5) * 3;
+            data.push(Math.max(0, Math.min(100, base + noise)));
+        }
+        return data;
+    }
+    
+    function generateNormalData(points) {
+        const data = [];
+        for (let i = 0; i < points; i++) {
+            data.push({
+                x: Math.random() * 100,
+                y: Math.random() * 100
+            });
+        }
+        return data;
+    }
+    
+    function generateAnomalyData(points) {
+        const data = [];
+        for (let i = 0; i < points; i++) {
+            // Generate outliers
+            data.push({
+                x: Math.random() > 0.5 ? Math.random() * 20 : 80 + Math.random() * 20,
+                y: Math.random() > 0.5 ? Math.random() * 20 : 80 + Math.random() * 20
+            });
+        }
+        return data;
+    }
+    
+    // Period change handlers
+    document.querySelectorAll('[data-period]').forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            document.querySelectorAll('[data-period]').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const period = this.dataset.period;
+            updatePredictiveChart(period);
+        });
+    });
+    
+    function updatePredictiveChart(period) {
+        let points;
+        switch(period) {
+            case '24h': points = 24; break;
+            case '7d': points = 7; break;
+            case '30d': points = 30; break;
+            default: points = 24;
+        }
+        
+        predictiveChart.data.labels = generateTimeLabels(points);
+        predictiveChart.data.datasets[0].data = generatePredictiveData(points);
+        predictiveChart.data.datasets[1].data = generateActualData(points);
+        predictiveChart.data.datasets[2].data = generateConfidenceData(points);
+        predictiveChart.update();
+    }
+    
+    // Auto-refresh data every 30 seconds
+    setInterval(() => {
+        // Update gauges with slight variations
+        const dataQuality = 95 + Math.random() * 5;
+        const systemHealth = 90 + Math.random() * 10;
+        
+        createGauge('dataQualityGauge', Math.round(dataQuality), 'Data Quality');
+        createGauge('healthGauge', Math.round(systemHealth), 'System Health');
+        
+        // Update risk factors with random variations
+        updateRiskFactors();
+    }, 30000);
+    
+    function updateRiskFactors() {
+        const factors = document.querySelectorAll('.risk-factor');
+        factors.forEach(factor => {
+            const progressBar = factor.querySelector('.progress-bar');
+            const badge = factor.querySelector('.badge');
+            
+            // Simulate small changes
+            const currentWidth = parseInt(progressBar.style.width);
+            const newWidth = Math.max(10, Math.min(90, currentWidth + (Math.random() - 0.5) * 10));
+            
+            progressBar.style.width = `${newWidth}%`;
+            
+            // Update badge based on new value
+            if (newWidth < 30) {
+                badge.className = 'badge bg-success';
+                badge.textContent = 'Low';
+                progressBar.className = 'progress-bar bg-success';
+            } else if (newWidth < 60) {
+                badge.className = 'badge bg-warning';
+                badge.textContent = 'Medium';
+                progressBar.className = 'progress-bar bg-warning';
+            } else {
+                badge.className = 'badge bg-danger';
+                badge.textContent = 'High';
+                progressBar.className = 'progress-bar bg-danger';
+            }
+        });
+    }
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        initCharts();
+    });
+</script>
+{% endblock %}
