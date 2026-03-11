@@ -98,6 +98,17 @@ This project implements an advanced AI-powered gas leak detection system that us
 │   (SQLite DB)   │    │   (Flask App)    │    │ (911/Gas Co.)   │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
 ```
+## 📊 System Dashboard
+
+### Real-Time Monitoring Dashboard
+![GasGuard Pro Dashboard](screenshots/dashboard.png)
+
+The real-time dashboard provides continuous monitoring of gas sensor readings, system status, and AI-based risk assessment. It displays live data from MQ-4, MQ-7, and MQ-135 sensors along with automatic shutoff status and alert notifications.
+
+### AI Insights & Analytics
+![GasGuard Pro Analytics](screenshots/analytics.png)
+
+The analytics panel provides predictive risk analysis using machine learning. It includes AI accuracy metrics, prevented incidents, response time statistics, and risk factor monitoring to help detect potential gas leaks before they become critical.
 
 ## File Structure
 
